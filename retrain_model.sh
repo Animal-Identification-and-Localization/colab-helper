@@ -34,6 +34,20 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+#Deciding which model to use
+source "/contents/colab-helper/constants.sh"
+network_type="mobilenet_v1_ssd"
+train_whole_model="false"
+ckpt_link="${ckpt_link_map[${network_type}]}"
+ckpt_name="${ckpt_name_map[${network_type}]}"
+
+#Downloading the model as required
+cd "/content/training/ckpt"
+wget -O "${ckpt_name}.tar.gz" "$ckpt_link"
+tar zxvf "${ckpt_name}.tar.gz"
+mv "${ckpt_name}" "${CKPT_DIR}"
+
+#Running training
 python /content/models/research/object_detection/model_main.py \
   --pipeline_config_path="/content/training/ckpt/pipeline.config" \
   --model_dir="content/training/models" \
